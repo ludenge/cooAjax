@@ -43,9 +43,9 @@ cooAjax 用于拦截ajax。 它细化原生ajax请求过程，包括beforeOpen, 
 ## 示例
 ```js
   cooAjax.start({
-  	beforeOpen(args) {
-  		args[1] = './xxx/list.json'
-  	},
+    beforeOpen(args) {
+      args[1] = './xxx/list.json'
+    },
     afterOpen(args, xhr) {
       Object.defineProperty(xhr, 'response', {
         get() {
@@ -59,9 +59,9 @@ cooAjax 用于拦截ajax。 它细化原生ajax请求过程，包括beforeOpen, 
   xhr.open('get', './news.json');
   xhr.send('{name: "ludeng"}')
   xhr.onreadystatechange = function(e) {
-  	if (xhr.readyState === 4) {
-  		console.log('response:', xhr.response);
-  	}
+    if (xhr.readyState === 4) {
+      console.log('response:', xhr.response);
+    }
   }
 ```
 
