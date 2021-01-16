@@ -1,10 +1,11 @@
 window.cooAjax = {
   XHR: window.XMLHttpRequest,
   start(opts) {
-    class CooXHR extends cooAjax.XHR {
+    return window.XMLHttpRequest = class extends cooAjax.XHR {
       constructor() {
         super()
         opts['loadend'] && this.addEventListener('loadend', opts['loadend'])
+        opts['onreadystatechange'] && this.addEventListener('readystatechange', opts['onreadystatechange'])
       }
       open() {
         opts['beforeOpen'] && opts['beforeOpen'](arguments)
@@ -12,14 +13,18 @@ window.cooAjax = {
         opts['afterOpen'] && opts['afterOpen'](arguments, this)
       }
       send() {
-        opts['beforeSend'] && opts['beforeSend'](arguments) && cooAjax.XHR.prototype['send'].apply(this,
+        opts['beforeSend'] && opts['beforeSend'](arguments) || cooAjax.XHR.prototype['send'].apply(this,
           arguments)
         opts['afterSend'] && opts['afterSend'](arguments, this)
       }
     }
-    window.XMLHttpRequest = CooXHR;
   },
   stop() {
     window.XMLHttpRequest = cooAjax.XHR;
+  },
+  set(obj, prop, value) {
+    Object.defineProperty(obj, prop, {
+      get: () => value
+    })
   }
 }
