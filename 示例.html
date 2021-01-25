@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title></title>
+  <script src="./cooAjax.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+
+  <button type="button" id="btn">xhr请求</button><br/><br/><br/>
+  <button type="button" id="btn1">fetch请求</button><br/><br/><br/>
+  
+  
+  <script type="text/javascript">
+    cooAjax.start({
+      beforeOpen(args) {
+        if (args[1].includes('/news.json')) {
+          args[1] = './xxx/news.json'
+        }
+      },
+      afterOpen(args, xhr) {
+        if (args[1].includes('/xxx/news.json')) {
+          cooAjax.set(xhr, 'response', JSON.stringify({ name: '自定义响应数据'}))
+          cooAjax.set(xhr, 'responseText', JSON.stringify({ name: '自定义响应数据'}))
+        }
+      }
+    })
+    
+    cooAjax.start({
+      beforeRequest(args) {
+        // 添加请求头
+        if (args[1].headers) {
+          args[1].headers['x-cur-ajax'] = 'cooAjax'
+        } else {
+          args[1].headers = {
+            ['x-cur-ajax']: 'cooAjax'
+          }
+        }
+        this.req = args
+      },
+      beforeResponse(response) {
+        if (this.req[0].includes('/news')) {
+          return {
+            name: '蓝上连牙 蓝上了！'
+          }
+        }
+      }
+    })
+    
+  </script>
+  
+  <script type="text/javascript">
+    btn.onclick = function(e) {
+      var xhr = new XMLHttpRequest()
+      xhr.open('get', './news.json');
+      xhr.send()
+      xhr.onreadystatechange = function(e) {
+      	if (xhr.readyState === 4) {
+      		console.log('xhr response:', xhr.response);
+      	}
+      }
+    }
+    btn1.onclick = function(e) {
+      fetch('./news.json', {
+        method: 'get'
+      }).then(response => {
+        // console.log('response', response.url)
+        return response.text()
+      }).then(data => {
+        console.log('data', data)
+      })
+    }
+  </script>
+
+</body>
+</html>
